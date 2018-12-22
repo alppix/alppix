@@ -2,6 +2,9 @@
   "name": "alppix",
   "version": "0.0.0",
   "private": true,
+  "scripts": {
+    "semantic-release": "semantic-release"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/alppix/alppix.git"
@@ -12,9 +15,37 @@
       "commit-msg": "commitlint -E HUSKY_GIT_PARAMS"
     }
   },
+  "release": {
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      [
+        "@semantic-release/changelog",
+        {
+          "changelogFile": "CHANGELOG.md"
+        }
+      ],
+      "@semantic-release/npm",
+      [
+        "@semantic-release/git",
+        {
+          "assets": [
+            "CHANGELOG.md",
+            "package.json"
+          ],
+          "message": "release: cut the ${nextRelease.version} release [skip ci]\n\n${nextRelease.notes}"
+        }
+      ],
+      "@semantic-release/github"
+    ],
+    "tagFormat": "${version}"
+  },
   "devDependencies": {
     "@commitlint/cli": "^7.2.1",
     "@commitlint/config-conventional": "^7.1.2",
-    "husky": "^1.2.1"
+    "@semantic-release/changelog": "^3.0.1",
+    "@semantic-release/git": "^7.0.6",
+    "husky": "^1.2.1",
+    "semantic-release": "^15.13.1"
   }
 }

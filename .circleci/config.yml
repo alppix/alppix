@@ -1,8 +1,40 @@
-version: 2
-jobs:
-  build:
+version: 2.1
+
+orbs:
+  node: circleci/node@0.0.7
+
+executors:
+  default_executor:
     docker:
       - image: circleci/node:10
+    working_directory: ~/project
+
+commands:
+  run_npm_install_with_cache:
+    description: "Run NPM install with cache"
+    steps:
+      - node/with-cache:
+          cache-key: "package-lock.json"
+          dir: node_modules
+          steps:
+            - run:
+                name: Run NPM install
+                command: npm install
+
+jobs:
+  release:
+    executor: default_executor
     steps:
       - checkout
-      - run: echo "Hello World!"
+      - run_npm_install_with_cache
+      - run:
+          name: Run semantic release
+          command: npm run semantic-release
+
+workflows:
+  default_workflow:
+    jobs:
+      - release:
+          filters:
+            branches:
+              only: master
